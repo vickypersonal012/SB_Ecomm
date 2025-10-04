@@ -6,11 +6,11 @@ import com.ecommerce.sb_ecomm.exceptions.APIException;
 import com.ecommerce.sb_ecomm.exceptions.ResourceNotFoundException;
 import com.ecommerce.sb_ecomm.model.Category;
 import com.ecommerce.sb_ecomm.repositories.CategoryRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -31,8 +31,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse getCategoryList(Integer pageNumber, Integer pageSize){
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    public CategoryResponse getCategoryList(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending():
+                  Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
         Page<Category> categoryPage = categoryRepository.findAll(pageable);
         List<Category> categoryList = categoryPage.getContent();
         if (categoryList.isEmpty())
