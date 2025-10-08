@@ -1,9 +1,6 @@
 package com.ecommerce.sb_ecomm.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -11,15 +8,24 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Collection;
+import java.util.List;
+
 @Entity(name = "categories")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Category {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long categoryId;
+
     @NotBlank
     @Size(min = 5, message = "Category name should at least 5 characters")
     private String categoryName;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long categoryId;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Product> product;
+
+
 }

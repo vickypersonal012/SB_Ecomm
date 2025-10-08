@@ -2,9 +2,6 @@ package com.ecommerce.sb_ecomm.Service;
 
 import com.ecommerce.sb_ecomm.Payload.CategoryDTO;
 import com.ecommerce.sb_ecomm.Payload.CategoryResponse;
-import com.ecommerce.sb_ecomm.model.Category;
-
-import java.util.List;
 
 public interface CategoryService {
 
