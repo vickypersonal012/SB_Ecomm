@@ -1,5 +1,6 @@
 package com.ecommerce.sb_ecomm.security.jwt;
 
+import com.ecommerce.sb_ecomm.security.services.UserDetailServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,13 +22,14 @@ import java.io.IOException;
 public class AuthTokenFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
     private final JwtUtils jwtUtils;
-    private final UserDetailsService userDetailsService;
+    private final UserDetailServiceImpl userDetailsServiceImpl;
 
     @Autowired
-    public AuthTokenFilter(JwtUtils jwtUtils, UserDetailsService userDetailsService) {
+    public AuthTokenFilter(JwtUtils jwtUtils, UserDetailServiceImpl userDetailsServiceImpl) {
         this.jwtUtils = jwtUtils;
-        this.userDetailsService = userDetailsService;
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -35,10 +37,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         logger.debug("AuthTokenFilter Called for URI:{}", request.getRequestURI());
         try {
-            String jwt = jwtUtils.getJwtFromHeader(request);
+            //String jwt = jwtUtils.getJwtFromHeader(request);
+            String jwt = jwtUtils.getJwtFromCookies(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
                 String userName = jwtUtils.getUserNameFromJWTToken(jwt);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+                UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(userName);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,
                         null, userDetails.getAuthorities());
                 logger.debug("Roles From JWT:{}", userDetails.getAuthorities());
